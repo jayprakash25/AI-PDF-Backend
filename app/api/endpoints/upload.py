@@ -7,6 +7,8 @@ import datetime
 from typing import List
 import asyncio
 import logging
+import os
+import psycopg2
 
 router = APIRouter()
 
@@ -33,25 +35,41 @@ async def upload_pdf(files: List[UploadFile] = File(...)):
         # Update the global variable with the new vector store
         utils.global_vector_store = vector_store
 
+        # Connect to the PostgreSQL database
+        DATABASE_URL = os.getenv("DATABASE_URL")
+        conn = psycopg2.connect(DATABASE_URL)
+
         # Initialize a list to store any errors encountered
         upload_errors = []
 
         # Process each file
         for file in files:
             try:
-                # Store the PDF metadata in the database using a context manager
-                with SessionLocal() as session:
-                    pdf_data = pdf.PDF(filename=file.filename, upload_date=datetime.datetime.now())
-                    session.add(pdf_data)
-                    session.commit()
+                # Create a cursor object
+                cur = conn.cursor()
+
+                # Insert the PDF metadata into the database
+                filename = file.filename
+                upload_date = datetime.datetime.now()
+                text = None  # Assuming you don't have the text content yet
+                insert_query = "INSERT INTO pdfs (filename, upload_date, text) VALUES (%s, %s, %s)"
+                cur.execute(insert_query, (filename, upload_date, text))
+
+                # Commit the changes
+                conn.commit()
+
+                # Close the cursor
+                cur.close()
 
                 # Upload the file to S3
                 await asyncio.to_thread(config.upload_to_s3, file.file, file.filename)
-
             except Exception as file_error:
                 # Collect any errors encountered during file processing
                 logger.error(f"Error processing file {file.filename}: {file_error}")
                 upload_errors.append({"file": file.filename, "error": str(file_error)})
+
+        # Close the database connection
+        conn.close()
 
         if upload_errors:
             return {
@@ -59,9 +77,7 @@ async def upload_pdf(files: List[UploadFile] = File(...)):
                 "message": "Some files failed to upload",
                 "errors": upload_errors
             }
-
         return {"status": "success", "message": "All files uploaded successfully"}
-
     except Exception as e:
         # General exception handler
         logger.error(f"General error: {str(e)}")

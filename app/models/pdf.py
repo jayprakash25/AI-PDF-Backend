@@ -1,24 +1,24 @@
 import os
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+import psycopg2
 
-Base = declarative_base()
+# Connect to the PostgreSQL database
+DATABASE_URL = os.getenv("DATABASE_URL")
+conn = psycopg2.connect(DATABASE_URL)
 
-class PDF(Base):
-    __tablename__ = "pdfs"
+# Create a cursor object
+cur = conn.cursor()
 
-    id = Column(Integer, primary_key=True, index=True)
-    filename = Column(String,unique=True, index=True)
-    upload_date = Column(DateTime)
-    text = Column(Text)
+# Create the "pdfs" table
+create_table_query = """
+CREATE TABLE IF NOT EXISTS pdfs (
+    id SERIAL PRIMARY KEY,
+    filename TEXT UNIQUE NOT NULL,
+    upload_date TIMESTAMP NOT NULL,
+    text TEXT
+);
+"""
+cur.execute(create_table_query)
 
-SQL_ALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
-print(SQL_ALCHEMY_DATABASE_URL)
-
-engine = create_engine(SQL_ALCHEMY_DATABASE_URL)
-
-# Create the table in the database
-Base.metadata.create_all(engine)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+# Commit the changes and close the connection
+conn.commit()
+conn.close()
