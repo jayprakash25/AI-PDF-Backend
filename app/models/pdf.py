@@ -12,7 +12,7 @@ cur = conn.cursor()
 create_table_query = """
 CREATE TABLE IF NOT EXISTS pdfs (
     id SERIAL PRIMARY KEY,
-    filename TEXT UNIQUE NOT NULL,
+    filename TEXT NOT NULL,
     upload_date TIMESTAMP NOT NULL,
     text TEXT
 );
