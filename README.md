@@ -43,31 +43,36 @@ This repository contains the backend code for a full-stack application that allo
 ### Installation
 
 1. **Clone the repository**:
+2. 
    ```bash
-   git clone https://github.com/your-username/fullstack-internship-backend.git
-   cd fullstack-internship-backend
+   https://github.com/jayprakash25/AI-PDF-Backend.git
+   cd AI-PDF-Backend
 
-2. **Create and activate a virtual environment**:
+3. **Create and activate a virtual environment**:
+   
      ```bash
      python -m venv env
      source env/bin/activate  # env\Scripts\activate --for windows
 
 
-3. **Install dependencies**:
+5. **Install dependencies**:
+   
      ```bash
      pip install -r requirements.txt
 
-4. **Run the application**:
+7. **Run the application**:
+   
      ```bash
      uvicorn app.main:app --reload
 
 ### Environment variables
-  ```bash
-OPENAI_API_KEY='YOUR OPENAI API KEY'
-ACCESS_KEY='AWS ACCESS KEY'
-SECRET_KEY='AWS SECRET KEY'
-BUCKET_NAME='AWS S3 BUCKET NAME'
-DATABASE_URL ='postgres://{user}:{password}@{hostname}:{port}/{database-name}' or hosted service url 
+
+     ```bash
+      OPENAI_API_KEY='YOUR OPENAI API KEY'
+      ACCESS_KEY='AWS ACCESS KEY'
+      SECRET_KEY='AWS SECRET KEY'
+      BUCKET_NAME='AWS S3 BUCKET NAME'
+      DATABASE_URL ='postgres://{user}:{password}@{hostname}:{port}/{database-name}' or hosted service url 
 
 
 
