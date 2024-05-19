@@ -43,7 +43,7 @@ This repository contains the backend code for a full-stack application that allo
 ### Installation
 
 1. **Clone the repository**:
-2. 
+   
    ```bash
    https://github.com/jayprakash25/AI-PDF-Backend.git
    cd AI-PDF-Backend
